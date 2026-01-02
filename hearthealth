@@ -1,0 +1,48 @@
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# 1. Load the dataset (Assuming 'heart.csv' is in your directory)
+# You can download it from: https://archive.ics.uci.edu/ml/datasets/heart+disease
+df = pd.read_csv('heart.csv')
+
+# 2. Data Preprocessing
+X = df.drop('target', axis=1) # Features
+y = df['target']              # Label (1 = Disease, 0 = No Disease)
+
+# Splitting the data (80% Train, 20% Test)
+# random_state=42 is often used to get consistent results around 82-85%
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Feature Scaling (Crucial for medical data with different units)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 3. Model Training (Random Forest)
+# Hyperparameters are tuned to balance precision and recall
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# 4. Evaluation
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"--- Model Results ---")
+print(f"Overall Accuracy: {accuracy * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# 5. Prediction Function for New Data
+def predict_cvs_risk(data):
+    scaled_data = scaler.transform([data])
+    prediction = model.predict(scaled_data)
+    return "High Risk" if prediction[0] == 1 else "Low Risk"
+
+# Example: [Age, Sex, CP, Trestbps, Chol, Fbs, Restecg, Thalach, Exang, Oldpeak, Slope, Ca, Thal]
+sample_patient = [57, 0, 0, 140, 241, 0, 1, 123, 1, 0.2, 1, 0, 3]
+print(f"Sample Patient Risk: {predict_cvs_risk(sample_patient)}")
