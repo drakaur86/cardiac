@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 # 1. Load the dataset (Assuming 'heart.csv' is in your directory)
-# You can download it from: https://archive.ics.uci.edu/ml/datasets/heart+disease
+#  download it from: https://archive.ics.uci.edu/ml/datasets/heart+disease
 df = pd.read_csv('heart.csv')
 
 # 2. Data Preprocessing
